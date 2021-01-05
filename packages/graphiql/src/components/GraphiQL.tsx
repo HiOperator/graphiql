@@ -77,7 +77,7 @@ export type FetcherParams = {
 };
 
 export type FetcherOpts = {
-  headers?: { [key: string]: any };
+  headers?: any;
   shouldPersistHeaders: boolean;
 };
 
@@ -817,10 +817,10 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
       shouldPersistHeaders: Boolean(this.props.shouldPersistHeaders),
     };
     if (this.state.headers && this.state.headers.trim().length > 2) {
-      fetcherOpts.headers = JSON.parse(this.state.headers);
+      fetcherOpts.headers = this.state.headers.trim();
       // if state is not present, but props are
     } else if (this.props.headers) {
-      fetcherOpts.headers = JSON.parse(this.props.headers);
+      fetcherOpts.headers = this.props.headers;
     }
 
     const fetch = fetcherReturnToPromise(
@@ -903,38 +903,38 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
     cb: (value: FetcherResult) => any,
   ): Promise<null | Unsubscribable> {
     const fetcher = this.props.fetcher;
-    let jsonVariables = null;
-    let jsonHeaders = null;
-
-    try {
-      jsonVariables =
-        variables && variables.trim() !== '' ? JSON.parse(variables) : null;
-    } catch (error) {
-      throw new Error(`Variables are invalid JSON: ${error.message}.`);
-    }
-
-    if (typeof jsonVariables !== 'object') {
-      throw new Error('Variables are not a JSON object.');
-    }
-
-    try {
-      jsonHeaders =
-        headers && headers.trim() !== '' ? JSON.parse(headers) : null;
-    } catch (error) {
-      throw new Error(`Headers are invalid JSON: ${error.message}.`);
-    }
-
-    if (typeof jsonHeaders !== 'object') {
-      throw new Error('Headers are not a JSON object.');
-    }
+    // let jsonVariables = null;
+    // let jsonHeaders = null;
+    //
+    // try {
+    //   jsonVariables =
+    //     variables && variables.trim() !== '' ? JSON.parse(variables) : null;
+    // } catch (error) {
+    //   throw new Error(`Variables are invalid JSON: ${error.message}.`);
+    // }
+    //
+    // if (typeof jsonVariables !== 'object') {
+    //   throw new Error('Variables are not a JSON object.');
+    // }
+    //
+    // try {
+    //   jsonHeaders =
+    //     headers && headers.trim() !== '' ? JSON.parse(headers) : null;
+    // } catch (error) {
+    //   throw new Error(`Headers are invalid JSON: ${error.message}.`);
+    // }
+    //
+    // if (typeof jsonHeaders !== 'object') {
+    //   throw new Error('Headers are not a JSON object.');
+    // }
 
     const fetch = fetcher(
       {
         query,
-        variables: jsonVariables,
+        variables: variables.trim(),
         operationName,
       },
-      { headers: jsonHeaders, shouldPersistHeaders },
+      { headers: headers.trim(), shouldPersistHeaders },
     );
 
     return Promise.resolve<SyncFetcherResult>(fetch)
@@ -1405,9 +1405,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
     return false;
   }
 
-  private handleDocsResizeStart: MouseEventHandler<
-    HTMLDivElement
-  > = downEvent => {
+  private handleDocsResizeStart: MouseEventHandler<HTMLDivElement> = downEvent => {
     downEvent.preventDefault();
 
     const hadWidth = this.state.docExplorerWidth;
@@ -1476,16 +1474,12 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
   };
 
   // Prevent clicking on the tab button from propagating to the resizer.
-  private handleTabClickPropogation: MouseEventHandler<
-    HTMLDivElement
-  > = downEvent => {
+  private handleTabClickPropogation: MouseEventHandler<HTMLDivElement> = downEvent => {
     downEvent.preventDefault();
     downEvent.stopPropagation();
   };
 
-  private handleOpenHeaderEditorTab: MouseEventHandler<
-    HTMLDivElement
-  > = _clickEvent => {
+  private handleOpenHeaderEditorTab: MouseEventHandler<HTMLDivElement> = _clickEvent => {
     this.setState({
       headerEditorActive: true,
       variableEditorActive: false,
@@ -1493,9 +1487,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
     });
   };
 
-  private handleOpenVariableEditorTab: MouseEventHandler<
-    HTMLDivElement
-  > = _clickEvent => {
+  private handleOpenVariableEditorTab: MouseEventHandler<HTMLDivElement> = _clickEvent => {
     this.setState({
       headerEditorActive: false,
       variableEditorActive: true,
@@ -1503,9 +1495,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
     });
   };
 
-  private handleSecondaryEditorResizeStart: MouseEventHandler<
-    HTMLDivElement
-  > = downEvent => {
+  private handleSecondaryEditorResizeStart: MouseEventHandler<HTMLDivElement> = downEvent => {
     downEvent.preventDefault();
 
     let didMove = false;
